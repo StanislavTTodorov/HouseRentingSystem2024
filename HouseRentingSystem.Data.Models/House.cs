@@ -38,9 +38,8 @@ namespace HouseRentingSystem.Data.Models
         public Guid AgentId { get; set; }
         public virtual Agent Agent { get; set; } = null!;
 
-        [ForeignKey(nameof(Renter))]
         public Guid? RenterId { get; set; }
-        public virtual ApplicationUser Renter { get; set; } = null!;
+        public virtual ApplicationUser Renter { get; set; } = null !;
 
     }
 }
