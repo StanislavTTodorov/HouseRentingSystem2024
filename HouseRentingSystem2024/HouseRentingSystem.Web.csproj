@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-HouseRentingSystem2024-216c0bc6-dc22-4dac-871e-c91a72646281</UserSecretsId>
+    <UserSecretsId>aspnet-HouseRentingSystem-216c0bc6-dc22-4dac-871e-c91a72646281</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +13,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.26" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.26" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.26" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HouseRentingSystem.Common\HouseRentingSystem.Common.csproj" />
   </ItemGroup>
 
 </Project>

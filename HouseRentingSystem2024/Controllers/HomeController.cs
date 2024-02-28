@@ -1,8 +1,8 @@
-﻿using HouseRentingSystem2024.Models;
+﻿using HouseRentingSystem.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace HouseRentingSystem2024.Controllers
+namespace HouseRentingSystem.Web.Controllers
 {
     public class HomeController : Controller
     {
@@ -16,12 +16,7 @@ namespace HouseRentingSystem2024.Controllers
         public IActionResult Index()
         {
             return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        }     
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
