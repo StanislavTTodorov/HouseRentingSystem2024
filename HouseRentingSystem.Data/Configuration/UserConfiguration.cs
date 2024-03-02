@@ -24,6 +24,7 @@ namespace HouseRentingSystem.Data.Configuration
                 NormalizedUserName = "agent@mail.com",
                 Email = "agent@mail.com",
                 NormalizedEmail = "agent@mail.com"
+                
             };
 
             agentUser.PasswordHash = hasher.HashPassword(agentUser, "agent123");
