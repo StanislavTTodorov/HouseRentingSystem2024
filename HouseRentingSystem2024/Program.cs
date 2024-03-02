@@ -1,16 +1,22 @@
 
-public class Program
+
+
+using HouseRentingSystem.Services.Data.Interfaces;
+
+internal class Program
 {
     private static async Task Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+
 
         builder.Services.AddApplicationDbContext(builder.Configuration);
         builder.Services.AddApplicationIdentiry(builder.Configuration);
 
         builder.Services.AddControllersWithViews();
 
-        builder.Services.AddApplicationServises();
+        builder.Services.AddApplicationServises(typeof(IHouseService));
 
         WebApplication app = builder.Build();
 
