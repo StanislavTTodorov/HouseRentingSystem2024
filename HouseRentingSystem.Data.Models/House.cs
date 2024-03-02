@@ -33,6 +33,9 @@ namespace HouseRentingSystem.Data.Models
         public decimal PricePerMonth  { get; set; }
 
         [Required]
+        public DateTime CreateOn { get; set; }
+
+        [Required]
         [ForeignKey(nameof(Category))]
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; } = null!;

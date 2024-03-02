@@ -6,9 +6,12 @@ namespace HouseRentingSystem.Data.Configuration
 {
     public class HouseConfiguration : IEntityTypeConfiguration<House>
     {
-
         public void Configure(EntityTypeBuilder<House> builder)
         {
+
+            builder.Property(h => h.CreateOn)
+                .HasDefaultValue(DateTime.UtcNow);
+
             builder
                 .HasOne(c => c.Category)
                 .WithMany(h => h.Houses)
