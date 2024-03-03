@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///  This method registers all services with their interfaces and implementations of given assembly.
         ///  The assembly is taken from the type of random service implementation provided. 
         /// </summary>
-        /// <param name="serviceType">Type of random service implementation </param>
+        /// <param name="serviceType"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
         public static IServiceCollection AddApplicationServises(this IServiceCollection services,Type serviceType)
