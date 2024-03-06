@@ -45,7 +45,7 @@ namespace HouseRentingSystem.Web.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-            bool isPhoneNumberTaken = await this.agentService.AgentExistsByPhoneNumberAsync(userId);
+            bool isPhoneNumberTaken = await this.agentService.AgentExistsByPhoneNumberAsync(model.PhoneNumber);
             if (isPhoneNumberTaken)
             {
                 ModelState.AddModelError(nameof(model.PhoneNumber),"Agent with the provided phone number already exists!");
