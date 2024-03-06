@@ -69,7 +69,7 @@ namespace HouseRentingSystem.Web.Controllers
             }
             catch (Exception)
             {
-                this.TempData[ErrorMessage] = "Unexpected error occurred while registering you as agent! Please try agenin or later or contact administrator.";
+                this.TempData[ErrorMessage] = "Unexpected error occurred while registering you as agent! Please try agenin later or contact administrator.";
                 return this.RedirectToAction("Index", "Home");
             }
 

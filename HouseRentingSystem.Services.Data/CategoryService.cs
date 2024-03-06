@@ -33,5 +33,13 @@ namespace HouseRentingSystem.Services.Data
                           .ToArrayAsync();
             return allCategory;
         }
+
+        public async Task<bool> ExistsIdAsync(int id)
+        {
+            bool result = await this.dbContext
+                                    .Categories
+                                    .AnyAsync(c => c.Id == id);
+            return result;
+        }
     }
 }
