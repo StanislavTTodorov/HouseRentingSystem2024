@@ -50,16 +50,19 @@ namespace HouseRentingSystem.Web.Controllers
             {
                 ModelState.AddModelError(nameof(model.PhoneNumber),"Agent with the provided phone number already exists!");
             }
+
             if(!this.ModelState.IsValid)
             {
                 return this.View(model);
             }
+
             bool userHasActiveRents = await this.agentService.UserHasRentsByUserIdAsync(userId);
             if (userHasActiveRents)
             {
                 this.TempData[ErrorMessage] = "You must not have any active rents in order to become an agent!";
                 return this.RedirectToAction("Mine", "House");
             }
+
             try
             {
                 await this.agentService.CreateAsync(userId, model);
