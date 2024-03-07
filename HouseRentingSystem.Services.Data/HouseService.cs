@@ -1,6 +1,7 @@
 ﻿using HouseRentingSystem.Data;
 using HouseRentingSystem.Data.Models;
 using HouseRentingSystem.Services.Data.Interfaces;
+using HouseRentingSystem.Web.ViewModels.Agent;
 using HouseRentingSystem.Web.ViewModels.Home;
 using HouseRentingSystem.Web.ViewModels.House;
 using HouseRentingSystem.Web.ViewModels.House.Enums;
@@ -130,6 +131,41 @@ namespace HouseRentingSystem.Services.Data
 
             await dbContext.Houses.AddAsync(newHouse);
             await dbContext.SaveChangesAsync();
+        }
+
+        public async Task<HouseDetailsViewModel?> GetHouseDetailsByIdAsync(string houseId)
+        {
+            House? house = await this.dbContext
+                .Houses
+                .Include(h=>h.Category)
+                .Include(h=>h.Agent)
+                .ThenInclude(a=>a.User)
+                .Where(h => h.IsActive)
+                .FirstOrDefaultAsync();
+
+            if (house == null)
+            {
+                return null;
+            }
+
+            return new HouseDetailsViewModel
+            {
+                Id = house.Id.ToString(),
+                Title = house.Title,
+                Address = house.Address,
+                Description = house.Description,
+                ImageUrl = house.ImageUrl,
+                PricePerMonth = house.PricePerMonth,
+                Category = house.Category.Name,
+                IsRented = house.RenterId.HasValue,
+                Agent = new AgentInfoHouseViewModel()
+                {
+                    Email = house.Agent.User.Email.ToString(),
+                    PhoneNumber = house.Agent.PhoneNumber
+                }
+            };
+
+
         }
 
         public async Task<IEnumerable<IndexViewModel>> LastThreeHousesAsync()
