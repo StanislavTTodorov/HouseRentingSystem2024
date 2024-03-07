@@ -73,7 +73,7 @@ namespace HouseRentingSystem.Services.Data
                 housesQuery = housesQuery.Where(h => h.Category.Name == queryModel.Category);
             }
 
-            if (string.IsNullOrEmpty(queryModel.SearchString) == false))
+            if (string.IsNullOrEmpty(queryModel.SearchString) == false)
             {
                 string wildcard = $"%{queryModel.SearchString.ToLower()}%";
                 housesQuery = housesQuery.Where(h => EF.Functions.Like(h.Title, wildcard) ||
@@ -92,19 +92,19 @@ namespace HouseRentingSystem.Services.Data
             };
 
             IEnumerable<HouseAllViewModel> allHouses = await housesQuery
-                                                                  .Where(h => h.IsActive == true)
-                                                                  .Skip((queryModel.CurrentPage - 1) * queryModel.HousesPerPage)
-                                                                  .Take(queryModel.HousesPerPage)
-                                                                  .Select(h => new HouseAllViewModel()
-                                                                  {
-                                                                      Id = h.Id.ToString(),
-                                                                      Title = h.Title,
-                                                                      Address = h.Address,
-                                                                      ImageUrl = h.ImageUrl,
-                                                                      PricePerMonth = h.PricePerMonth,
-                                                                      IsRented = h.RenterId.HasValue
-                                                                  })
-                                                                  .ToArrayAsync();
+                         .Where(h => h.IsActive)
+                         .Skip((queryModel.CurrentPage - 1) * queryModel.HousesPerPage)
+                         .Take(queryModel.HousesPerPage)
+                         .Select(h => new HouseAllViewModel()
+                         {
+                             Id = h.Id.ToString(),
+                             Title = h.Title,
+                             Address = h.Address,
+                             ImageUrl = h.ImageUrl,
+                             PricePerMonth = h.PricePerMonth,
+                             IsRented = h.RenterId.HasValue
+                         })
+                         .ToArrayAsync();
 
             int totalHouses = housesQuery.Count();
 
@@ -133,20 +133,46 @@ namespace HouseRentingSystem.Services.Data
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task<HouseDetailsViewModel?> GetHouseDetailsByIdAsync(string houseId)
+        public async Task EditHouseByIdAndFormModel(string houseId, HouseFormModel formModel)
         {
-            House? house = await this.dbContext
+            House house = await this.dbContext
+                .Houses
+                .Where(h=>h.IsActive)
+                .FirstAsync(h=>h.Id.ToString()==houseId);
+
+            house.Title = formModel.Title;
+            house.Address = formModel.Address;
+            house.Description = formModel.Description;
+            house.ImageUrl = formModel.ImageUrl;
+            house.PricePerMonth = formModel.PricePerMonth;
+            house.CategoryId = formModel.CategoryId;
+
+            await this.dbContext.Houses.AddAsync(house);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> ExistsByIdAsync(string houseId)
+        {
+            bool result = await this.dbContext
+                                     .Houses
+                                     .Where(h => h.IsActive)
+                                     .AnyAsync(h => h.Id.ToString() == houseId);
+                                     
+           
+                                    
+            return result;
+        }
+
+        public async Task<HouseDetailsViewModel> GetHouseDetailsByIdAsync(string houseId)
+        {
+            House house = await this.dbContext
                 .Houses
                 .Include(h=>h.Category)
                 .Include(h=>h.Agent)
                 .ThenInclude(a=>a.User)
                 .Where(h => h.IsActive)
-                .FirstOrDefaultAsync();
-
-            if (house == null)
-            {
-                return null;
-            }
+                .FirstAsync(h=>h.Id.ToString() == houseId);
+    
 
             return new HouseDetailsViewModel
             {
@@ -160,12 +186,41 @@ namespace HouseRentingSystem.Services.Data
                 IsRented = house.RenterId.HasValue,
                 Agent = new AgentInfoHouseViewModel()
                 {
-                    Email = house.Agent.User.Email.ToString(),
+                    Email = house.Agent.User.Email ,
                     PhoneNumber = house.Agent.PhoneNumber
                 }
             };
 
 
+        }
+
+        public async Task<HouseFormModel> GetHouseEdidByIdAsync(string houseId)
+        {
+            House house = await this.dbContext
+                .Houses
+                .Include(h => h.Category)
+                .Where(h => h.IsActive)
+                .FirstAsync(h=>h.Id.ToString() == houseId);
+            return new HouseFormModel
+            {
+                Title = house.Title,
+                Address = house.Address,
+                Description = house.Description,
+                ImageUrl = house.ImageUrl,
+                PricePerMonth = house.PricePerMonth,
+                CategoryId = house.Category.Id
+            };
+        }
+
+        public async Task<bool> IsAgentWithIdOwnerOfHouseWithIdAsync(string houseId, string agentId)
+        {
+            House house = await this.dbContext
+                .Houses
+                .Include (h => h.Agent)
+                .Where(h => h.IsActive)
+                .FirstAsync(h=>h.Id.ToString() == houseId);
+
+            return house.AgentId.ToString()==agentId;
         }
 
         public async Task<IEnumerable<IndexViewModel>> LastThreeHousesAsync()

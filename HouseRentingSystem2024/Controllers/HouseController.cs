@@ -94,19 +94,116 @@ namespace HouseRentingSystem.Web.Controllers
             }
             return this.RedirectToAction("All", "House");
         }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult>Details(string id)
         {
-            HouseDetailsViewModel? viewModel = await this.houseService.GetHouseDetailsByIdAsync(id);
-
-            if (viewModel == null)
+            bool houseExist = await this.houseService.ExistsByIdAsync(id);
+            if (!houseExist)
             {
                 this.TempData[ErrorMessage] = "House with the provided id does not exist!";
-                return this.RedirectToAction("All","House");
+                return this.RedirectToAction("All", "House");
+            }
+          
+            try
+            {
+                HouseDetailsViewModel viewModel = await this.houseService.GetHouseDetailsByIdAsync(id);
+
+                return View(viewModel);
+            }
+            catch (Exception)
+            {
+                this.TempData[ErrorMessage] = "Unexpected error occurred! Please try agenin later or contact administrator.";
+                return this.RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult>Edit(string id)
+        {
+            bool isExist = await this.houseService.ExistsByIdAsync(id);
+            if (isExist == false)
+            {
+                this.TempData[ErrorMessage] = "House with the provided houseId does not exist!";
+                return this.RedirectToAction("All", "House");
+
             }
 
-            return View(viewModel);
+            string userId = this.User.GetId();
+            bool isAgent = await this.agentService.AgentExistsByUserIdAsync(userId);
+            if (isAgent == false)
+            {
+                this.TempData[ErrorMessage] = "You must become an agent in order to edit house info!";
+                return RedirectToAction("Become", "Agent");
+            }
+
+            string? agentId = await this.agentService.GetAgentIdByUserIdAsync(userId);
+            bool isOwner = await this.houseService.IsAgentWithIdOwnerOfHouseWithIdAsync(id, agentId!);
+            if (isOwner == false)
+            {
+                this.TempData[ErrorMessage] = "You must be the agent owner of the house you want to edit!";
+                return RedirectToAction("Mine", "House");
+            }
+            try
+            {
+                HouseFormModel model = await this.houseService.GetHouseEdidByIdAsync(id);
+                model.Categories = await this.categoryService.AllCategoriesAsync();
+                return this.View(model);
+            }
+            catch (Exception)
+            {
+                this.TempData[ErrorMessage] = "Unexpected error occurred! Please try agenin later or contact administrator.";
+                return this.RedirectToAction("Index", "Home");
+            }
+            
+           
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(string id,HouseFormModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                model.Categories = await this.categoryService.AllCategoriesAsync();
+                return this.View(model);
+            }
+
+            bool isExist = await this.houseService.ExistsByIdAsync(id);
+            if (isExist == false)
+            {
+                this.TempData[ErrorMessage] = "House with the provided houseId does not exist!";
+                return this.RedirectToAction("All", "House");
+
+            }
+
+            string userId = this.User.GetId();
+            bool isAgent = await this.agentService.AgentExistsByUserIdAsync(userId);
+            if (isAgent == false)
+            {
+                this.TempData[ErrorMessage] = "You must become an agent in order to edit house info!";
+                return RedirectToAction("Become", "Agent");
+            }
+
+            string? agentId = await this.agentService.GetAgentIdByUserIdAsync(userId);
+            bool isOwner = await this.houseService.IsAgentWithIdOwnerOfHouseWithIdAsync(id, agentId!);
+            if (isOwner == false)
+            {
+                this.TempData[ErrorMessage] = "You must be the agent owner of the house you want to edit!";
+                return RedirectToAction("Mine", "House");
+            }
+
+            try
+            {
+                await this.houseService.EditHouseByIdAndFormModel(id, model);
+            }
+            catch (Exception)
+            {
+                model.Categories = await this.categoryService.AllCategoriesAsync();
+                this.ModelState.AddModelError(string.Empty, "Unexpected error occurred while trying to update house!! Please try agenin later or contact administrator.");
+                return this.View(model);
+            }
+
+            return this.RedirectToAction("Details", "House",new { id});
         }
 
         [HttpGet]

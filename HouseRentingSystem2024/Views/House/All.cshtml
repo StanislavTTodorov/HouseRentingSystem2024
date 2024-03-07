@@ -97,7 +97,7 @@
 }
 
 <div class="row">
-    @foreach (var house in Model.Houses)
+    @foreach (HouseAllViewModel house in Model.Houses)
     {
         <partial name="_HousePartial" model="@house" />
     }

@@ -17,7 +17,7 @@
             <p>Located in: <b>@Model.Address</b></p>
             <p>
                 Price Per Month:
-                <b>@String.Format("{0:f2}", Model.PricePerMonth) BGN</b>
+                <b>@($"{Model.PricePerMonth:f2}")) BGN</b>
             </p>
             <p>@Model.Description</p>
             <p>Category: <b>@Model.Category</b></p>
