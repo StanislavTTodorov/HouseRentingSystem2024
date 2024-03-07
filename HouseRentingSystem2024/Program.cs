@@ -2,6 +2,7 @@
 
 
 using HouseRentingSystem.Services.Data.Interfaces;
+using HouseRentingSystem.Web.Infrastructure.ModelBinders;
 
 internal class Program
 {
@@ -14,7 +15,12 @@ internal class Program
         builder.Services.AddApplicationDbContext(builder.Configuration);
         builder.Services.AddApplicationIdentiry(builder.Configuration);
 
-        builder.Services.AddControllersWithViews();
+        builder.Services
+               .AddControllersWithViews()
+               .AddMvcOptions(options =>
+               {
+                   options.ModelBinderProviders.Insert(0,new DecimalModelBinderProvider());
+               });
 
         builder.Services.AddApplicationServises(typeof(IHouseService));
 
