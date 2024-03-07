@@ -34,6 +34,15 @@ namespace HouseRentingSystem.Services.Data
             return allCategory;
         }
 
+        public async Task<IEnumerable<string>> AllCategoryNameAsync()
+        {
+            IEnumerable<string> categoryName = await this.dbContext
+                                                         .Categories
+                                                         .Select(c => c.Name)
+                                                         .ToArrayAsync();
+            return categoryName;
+        }
+
         public async Task<bool> ExistsIdAsync(int id)
         {
             bool result = await this.dbContext
