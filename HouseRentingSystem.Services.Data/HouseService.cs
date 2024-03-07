@@ -45,7 +45,7 @@ namespace HouseRentingSystem.Services.Data
                 HouseSorting.PriceDescending => housesQuery.OrderByDescending(h => h.PricePerMonth),
                 HouseSorting.PriceAscending => housesQuery.OrderBy(h => h.PricePerMonth),
                 _ => housesQuery.OrderBy(h => h.RenterId != null)
-                                .OrderByDescending(h => h.CreateOn)
+                                .ThenByDescending(h => h.CreateOn)
             };
 
             IEnumerable<HouseAllViewModel> allHouses = await housesQuery.Skip((queryModel.CurrentPage - 1) * queryModel.HousesPerPage)

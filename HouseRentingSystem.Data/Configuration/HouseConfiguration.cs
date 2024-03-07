@@ -10,7 +10,7 @@ namespace HouseRentingSystem.Data.Configuration
         {
 
             builder.Property(h => h.CreateOn)
-                .HasDefaultValue(DateTime.UtcNow);
+                .HasDefaultValueSql("GETDATE()");
 
             builder
                 .HasOne(c => c.Category)
