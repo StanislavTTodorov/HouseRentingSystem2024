@@ -73,7 +73,7 @@ namespace HouseRentingSystem.Services.Data
                 housesQuery = housesQuery.Where(h => h.Category.Name == queryModel.Category);
             }
 
-            if (string.IsNullOrEmpty(queryModel.SearchString) == false)
+            if (string.IsNullOrEmpty(queryModel.SearchString) == false))
             {
                 string wildcard = $"%{queryModel.SearchString.ToLower()}%";
                 housesQuery = housesQuery.Where(h => EF.Functions.Like(h.Title, wildcard) ||
