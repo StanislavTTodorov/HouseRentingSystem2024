@@ -48,7 +48,9 @@ namespace HouseRentingSystem.Services.Data
                                 .ThenByDescending(h => h.CreateOn)
             };
 
-            IEnumerable<HouseAllViewModel> allHouses = await housesQuery.Skip((queryModel.CurrentPage - 1) * queryModel.HousesPerPage)
+            IEnumerable<HouseAllViewModel> allHouses = await housesQuery
+                                                                  .Where(h=>h.IsActive==true)
+                                                                  .Skip((queryModel.CurrentPage - 1) * queryModel.HousesPerPage)
                                                                   .Take(queryModel.HousesPerPage)
                                                                   .Select(h => new HouseAllViewModel()
                                                                   {
@@ -91,6 +93,7 @@ namespace HouseRentingSystem.Services.Data
         public async Task<IEnumerable<IndexViewModel>> LastThreeHousesAsync()
         {
            IEnumerable<IndexViewModel> lastThreeHouses =  await dbContext.Houses
+                                  .Where(h=>h.IsActive==true)
                                   .OrderByDescending(h => h.CreateOn)
                                   .Take(3)
                                   .AsNoTracking()
