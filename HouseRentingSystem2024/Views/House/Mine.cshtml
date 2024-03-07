@@ -1,0 +1,22 @@
+﻿@model List<HouseAllViewModel>
+@{
+    ViewData["Title"] = "My Houses";
+}
+
+<h2 class="text-center">@ViewData["Title"]</h2>
+<hr />
+
+
+@if(Model.Any()==false)
+{
+    <h2 class="text-center">You do not have any houses yet!</h2>
+}
+else
+{
+    <section class="row">
+        @foreach (HouseAllViewModel house in Model)
+        {
+            <partial name="_HousePartial" model="house" />
+        }
+    </section>
+}
